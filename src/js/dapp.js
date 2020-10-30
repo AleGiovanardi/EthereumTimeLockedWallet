@@ -29,27 +29,12 @@ DApp = {
             DApp.web3Provider = web3.currentProvider;
         } else {
             // If no injected web3 instance is detected, fallback to the TestRPC
-            DApp.web3Provider = new Web3.providers.HttpProvider('http://localhost:8545');
+            DApp.web3Provider = new Web3.providers.HttpProvider('http://localhost:9545');
         }
         web3 = new Web3(DApp.web3Provider);
         console.log("[x] web3 object initialized.");
+
     },
-    /*initWeb3: function() {
-        window.addEventListener('load', async() => {
-            if (window.ethereum) {
-                window.web3 = new Web3(ethereum);
-                try {
-                    await ethereum.enable();
-                } catch (err) {
-                    $('#status').html('User denied account access', err)
-                }
-            } else if (window.web3) {
-                window.web3 = new Web3(web3.currentProvider)
-            } else {
-                $('#status').html('No Metamask (or other Web3 Provider) installed')
-            }
-        })
-    },*/
 
     getFactoryContract: function() {
         if (DApp.development)
@@ -69,18 +54,18 @@ DApp = {
      *  TODO: Rewrite to use promises.
      */
     initContract: function() {
-        $.getJSON('../build/contracts/TimeLockedWalletFactory.json', function(factoryContract) {
+        $.getJSON('contracts/TimeLockedWalletFactory.json', function(factoryContract) {
             DApp.factoryContract = TruffleContract(factoryContract);
             DApp.factoryContract.setProvider(DApp.web3Provider);
             console.log("[x] TimeLockedWalletFactory contract initialized.");
 
             //hardcoding TestToken for simplicity
-            $.getJSON('../contracts/TestToken.json', function(testTokenContract) {
+            $.getJSON('contracts/TestToken.json', function(testTokenContract) {
                 DApp.testTokenContract = TruffleContract(testTokenContract);
                 DApp.testTokenContract.setProvider(DApp.web3Provider);
                 console.log("[x] TestToken contract initialized.");
 
-                $.getJSON('../build/contracts/TimeLockedWallet.json', function(walletContract) {
+                $.getJSON('contracts/TimeLockedWallet.json', function(walletContract) {
                     DApp.walletContract = TruffleContract(walletContract)
                     DApp.walletContract.setProvider(DApp.web3Provider);
                     console.log("[x] TimeLockedWallet contract initialized.");
@@ -523,7 +508,7 @@ DApp = {
     valueFormatter: function(cell, row) {
         var weiValue = DApp.getKnownWalletBallance(row['wallet'], 'wei');
         var ethValue = web3.fromWei(weiValue, 'ether');
-        var testValue = DApp.getKnownWalletBallance(row['wallet'], 'testtoken')
+        var testValue = DApp.getKnownWalletBallance(row['wallet'], 'testtoken');
 
         console.log("xxxx", row['wallet'], ethValue, testValue);
 
